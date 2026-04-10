@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Buyer Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>Your Tenders</h2>
+    <a href="{{ url_for('create_tender') }}" class="btn btn-primary">+ Create New Tender</a>
+</div>
+
+{% if tenders %}
+    <div class="tenders-grid">
+        {% for tender in tenders %}
+        <div class="tender-card">
+            <h3>{{ tender.title }}</h3>
+            <p>{{ tender.description[:100] }}...</p>
+            <div class="tender-meta">
+                <span>Deadline: {{ tender.deadline }}</span>
+                <a href="{{ url_for('view_bids', tender_id=tender.id) }}" class="btn btn-secondary">View Bids</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h3>No tenders created yet</h3>
+        <p>Create your first tender to start receiving bids!</p>
+        <a href="{{ url_for('create_tender') }}" class="btn btn-primary">Create Tender</a>
+    </div>
+{% endif %}
+{% endblock %}
