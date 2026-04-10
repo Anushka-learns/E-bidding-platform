@@ -6,6 +6,8 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-in-production'
 
+init_db()  
+
 # Database initialization
 def init_db():
     conn = sqlite3.connect('database.db')
@@ -256,6 +258,8 @@ def submit_bid(tender_id):
     conn.close()
     return render_template('submit_bid.html', tender=tender)
 
+import os
+
 if __name__ == '__main__':
-    init_db()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
