@@ -2,18 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
+import os
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-in-production'
+app.secret_key = os.environ.get("SECRET_KEY", "dev-key")
 
-init_db()  
+# ✅ Correct DB path (important for Railway)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, 'database.db')
 
-# Database initialization
+# ✅ Database initialization
 def init_db():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     
-    # Users table
     c.execute('''CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -22,7 +24,6 @@ def init_db():
         role TEXT NOT NULL CHECK(role IN ('buyer', 'vendor'))
     )''')
     
-    # Tenders table
     c.execute('''CREATE TABLE IF NOT EXISTS tenders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
@@ -33,7 +34,6 @@ def init_db():
         FOREIGN KEY (created_by) REFERENCES users (id)
     )''')
     
-    # Bids table
     c.execute('''CREATE TABLE IF NOT EXISTS bids (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tender_id INTEGER,
@@ -45,7 +45,7 @@ def init_db():
         FOREIGN KEY (vendor_id) REFERENCES users (id)
     )''')
     
-    # Insert sample data
+    # Insert sample data safely
     c.execute("SELECT COUNT(*) FROM users")
     if c.fetchone()[0] == 0:
         sample_users = [
@@ -57,12 +57,10 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Database helper functions
-import os
+# ✅ Call AFTER function definition
+init_db()
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, 'database.db')
-
+# ✅ DB connection helper
 def get_db_connection():
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -262,8 +260,6 @@ def submit_bid(tender_id):
     
     conn.close()
     return render_template('submit_bid.html', tender=tender)
-
-import os
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
