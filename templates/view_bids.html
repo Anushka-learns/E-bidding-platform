@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}View Bids - {{ tender.title }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>Bids for: {{ tender.title }}</h2>
+    <a href="{{ url_for('buyer_dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+</div>
+
+<div class="tender-details">
+    <h3>Tender Details</h3>
+    <p>{{ tender.description }}</p>
+    <p><strong>Deadline:</strong> {{ tender.deadline }}</p>
+</div>
+
+{% if bids %}
+    <div class="bids-section">
+        <h3>All Bids ({{ bids|length }})</h3>
+        <div class="bids-grid">
+            {% for bid in bids %}
+            <div class="bid-card">
+                <div class="bid-header">
+                    <h4>{{ bid.vendor_name }}</h4>
+                    <div class="bid-price">${{ "%.2f"|format(bid.bid_amount) }}</div>
+                </div>
+                <p>{{ bid.proposal_text }}</p>
+                <div class="bid-meta">
+                    <span>{{ bid.submitted_at }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h3>No bids yet</h3>
+        <p>Share this tender with vendors to receive bids!</p>
+    </div>
+{% endif %}
+{% endblock %}

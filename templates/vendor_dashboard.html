@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h2>Available Tenders ({{ tenders|length }})</h2>
+</div>
+
+{% if tenders %}
+    <div class="tenders-grid">
+        {% for tender in tenders %}
+        <div class="tender-card">
+            <h3>{{ tender.title }}</h3>
+            <p>By: {{ tender.buyer_name }}</p>
+            <p>{{ tender.description[:100] }}...</p>
+            <div class="tender-meta">
+                <span>Deadline: {{ tender.deadline }}</span>
+                <a href="{{ url_for('submit_bid', tender_id=tender.id) }}" class="btn btn-primary">Submit Bid</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h3>No tenders available</h3>
+        <p>Check back later for new opportunities!</p>
+    </div>
+{% endif %}
+{% endblock %}

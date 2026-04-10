@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Bid{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Submit Bid for: {{ tender.title }}</h2>
+    <div class="tender-preview">
+        <p><strong>Buyer:</strong> {{ tender.created_by }}</p>
+        <p><strong>Description:</strong> {{ tender.description }}</p>
+        <p><strong>Deadline:</strong> {{ tender.deadline }}</p>
+    </div>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Your Bid Amount ($)</label>
+            <input type="number" name="bid_amount" step="0.01" min="0.01" required 
+                   placeholder="1000.00">
+        </div>
+        <div class="form-group">
+            <label>Proposal (Why choose you?)</label>
+            <textarea name="proposal_text" rows="6" required 
+                placeholder="Tell us about your experience, timeline, pricing justification, etc..."></textarea>
+        </div>
+        <div class="form-actions">
+            <a href="{{ url_for('vendor_dashboard') }}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Submit Bid</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
